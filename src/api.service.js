@@ -1,13 +1,6 @@
 const createConnection = require('../server');
 const tables = require('./constants/tableNames');
 
-async function getData() {
-    const connection = await createConnection();
-    // query database
-    const [rows, fields] = await connection.query(`select * from ${tables.PATIENTBOOKINGSLOTS};`);
-
-    return rows;
-}
 
 const formatTime = (time) => {
     const timeArr = time.replace("am", "").replace("pm", "").split(":");
@@ -120,6 +113,14 @@ async function retriveData(getInfo) {
     try {
         const connection = await createConnection();
 
+        const qry = `select doc.* from doctor_time_slots doc
+        inner join patient_booking_slots pat on pat.doctor_time_slot_id = doc.id
+        inner join doctor_availabilities aval on aval.doctor_id = doc.doctor_id
+        where pat.appointment_date = ? and pat.doctor_time_slot_id = ?;`;
+
+        const [rows, fields] = await connection.execute(qry, [getInfo.appointment_date, getInfo.doctor_time_slot_id]);
+        return rows;
+
     }
     catch (err) {
         console.error(`Error occurred while while getting slots: ${err.message}`, err);
@@ -127,4 +128,4 @@ async function retriveData(getInfo) {
     }
 }
 
-module.exports = { getData, addData };
+module.exports = { addData, retriveData };

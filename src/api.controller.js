@@ -1,33 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const apiService = require('./api.service');
-
-router.get('/getData', getApiData);
++
 router.post('/addData', addData);
-router.post('/retriveData', retriveData);
+router.get('/retriveData', retriveData);
 
 
 module.exports = router;
 //use ASYNC AWAIT HERE AS WELL
 
-
-function getApiData(req, res) {
-    try {
-        apiService.getData()
-            .then(result => {
-                console.log('API RESULT', result);
-                return res.json({ success: true, result });
-            })
-            .catch(err => {
-                console.error(err);
-                return res.json({ success: false, err });
-            });
-    }
-    catch (e) {
-        console.error(e, "ERROR IN GETTING TEST DATA");
-        return res.json({ success: false, err: e });
-    }
-}
 
 function addData(req, res) {
     try {
